@@ -58,6 +58,7 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        move: {player: null, index: null}
       }],
       xIsNext: true,
       stepNumber: 0
@@ -69,14 +70,14 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
-
+    const char    = this.state.xIsNext ? 'X' : 'O';
     if ( this.gameWon || squares[i]) {
      return;
     }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    squares[i] = char
     this.setState({
       //unlike push, concat doesn’t mutate the original array. It's the preffered
-      history: history.concat([{squares: squares}]),
+      history: history.concat([{squares: squares, move:{player: char, index: i}}]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length
     });
@@ -86,6 +87,7 @@ class Game extends React.Component {
       stepNumber: step,
       xIsNext: (step % 2) === 0
     });
+    this.gameWon = false;
   }
   render() {
     const history = this.state.history;
@@ -97,9 +99,10 @@ class Game extends React.Component {
       const desc = move ?
         'Go to move #' + move :
         'Go to start';
+
       return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        <li key={move} className={(move === this.state.stepNumber) ? 'current-step' : ''}>
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>{move ? step.move.player+'('+indexToPos(step.move.index)+')' : ''}
         </li>
       );
     });
@@ -150,6 +153,20 @@ function determineWinner(squares) {
     }
   }
   return null;
+}
+function indexToPos(index) {
+  let row,col;
+  if(index<3){
+    row=1;
+    col=index+1;
+  }else if(index<6){
+    row=2;
+    col=index-row;
+  }else if(index<9){
+    row=3;
+    col=index-row;
+  }
+  return(''+col+','+row);
 }
 
 // ========================================
