@@ -62,3 +62,7 @@ ol, ul {
   margin: 5px;
   width: 108px;
 }
+
+.game-info li.current-step {
+  font-weight: bold;
+}
