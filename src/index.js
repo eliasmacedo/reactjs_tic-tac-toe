@@ -62,7 +62,7 @@ class Game extends React.Component {
       xIsNext: true,
       stepNumber: 0
     };
-    //this.gameWon = false;
+    this.gameWon = false;
   }
   clickCallback(i) {
     // if we “go back in time” and then make a new move from that point, we throw away all the “future” history
@@ -70,7 +70,7 @@ class Game extends React.Component {
     const current = history[history.length - 1];
     const squares = current.squares.slice();
 
-    if ( determineWinner(current.squares) || squares[i]) {
+    if ( this.gameWon || squares[i]) {
      return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
@@ -107,7 +107,7 @@ class Game extends React.Component {
     let status;
     if (winner) {
       status = 'Winner: ' + winner;
-      //this.gameWon = true;
+      this.gameWon = true;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
