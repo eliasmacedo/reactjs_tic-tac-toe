@@ -108,7 +108,11 @@ class Game extends React.Component {
 
     let status;
     if (winner) {
-      status = 'Winner: ' + winner.player;
+      if (winner.player) {
+        status = 'Winner: ' + winner.player;
+      } else {
+        status = 'Draw Game';
+      }
       this.gameWon = true;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
@@ -136,7 +140,6 @@ class Game extends React.Component {
 function determineWinner(squares) {
   //below are the possible lines that can be formed to win
   //3 horizontal, 3 vertical and 2 diagonal
-  console.log(squares);
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -147,13 +150,22 @@ function determineWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+  let allSquaresFilled = true; 
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      //winner found
       return {player: squares[a], combo: lines[i]};
+    } else if(squares[a] === null || squares[b] === null || squares[c] === null) {
+      //game not over yet
+      allSquaresFilled = false;
     }
   }
-  return null;
+  if (allSquaresFilled) {
+    return {player: null, combo: []}
+  } else {
+    return null;
+  }
 }
 function indexToPos(index) {
   let row,col;
