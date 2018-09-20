@@ -16,24 +16,26 @@ import './index.css';
 //}
 function Square(props) {
   return(
-    <button className="square" onClick={props.clickCallback}>
+    <button className={"square"+" "+props.className} onClick={props.clickCallback}>
       {props.value}
     </button>
   );
 }
 
 class Board extends React.Component {
-  renderSquare(i) {
-    return <Square key={i} value={this.props.squares[i]} 
+  renderSquare(i, winner) {
+    return <Square key={i} value={this.props.squares[i]}  className={winner===true ? 'winning-tile' : ''}
     			   clickCallback={() => this.props.clickCallback(i)} />;
   }
   render() {
     let squareDivs = [];
     let parentDivs = [];
     let index      = 0;
+    let winner     = false;
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
-        squareDivs = squareDivs.concat(this.renderSquare(index));
+        winner = (this.props.winningCombo.indexOf(index)>=0) ? true : false;
+        squareDivs = squareDivs.concat(this.renderSquare(index, winner));
         index++;
       }
       parentDivs = parentDivs.concat(<div key={i} className="board-row">{squareDivs}</div>);
@@ -106,7 +108,7 @@ class Game extends React.Component {
 
     let status;
     if (winner) {
-      status = 'Winner: ' + winner;
+      status = 'Winner: ' + winner.player;
       this.gameWon = true;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
@@ -120,6 +122,7 @@ class Game extends React.Component {
           <div className="game-board">
             <Board
               squares={current.squares}
+              winningCombo={winner ? winner.combo : []}
               clickCallback={(i) => this.clickCallback(i)}
             />
           </div>
@@ -133,6 +136,7 @@ class Game extends React.Component {
 function determineWinner(squares) {
   //below are the possible lines that can be formed to win
   //3 horizontal, 3 vertical and 2 diagonal
+  console.log(squares);
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -146,7 +150,7 @@ function determineWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {player: squares[a], combo: lines[i]};
     }
   }
   return null;
