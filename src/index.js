@@ -75,7 +75,7 @@ class Game extends React.Component {
     }
     squares[i] = char
     this.setState({
-      //unlike push, concat doesn’t mutate the original array. It's the preffered
+      //unlike push, concat doesn’t mutate the original array. It's preffered
       history: history.concat([{squares: squares, move:{player: char, index: i}}]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length
